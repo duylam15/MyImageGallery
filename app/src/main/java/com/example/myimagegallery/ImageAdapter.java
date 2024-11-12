@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
@@ -37,7 +39,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         // Sự kiện nhấp vào ảnh
         holder.imageView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ImageViewActivity.class);
-            intent.putExtra("imageUri", imageUri);
+            intent.putParcelableArrayListExtra("imageUris", new ArrayList<>(imageUris)); // Chuyển danh sách Uri
+            intent.putExtra("currentPosition", position); // Vị trí hiện tại
             context.startActivity(intent);
         });
     }

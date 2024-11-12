@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -31,10 +33,26 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+        checkAndRequestPermissions();
+
+
+    }
+
+    private void checkAndRequestPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 trở lên yêu cầu quyền READ_MEDIA_IMAGES
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_PERMISSION);
+            } else {
+                loadImages();
+            }
         } else {
-            loadImages();
+            // Android dưới 13 yêu cầu quyền READ_EXTERNAL_STORAGE
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+            } else {
+                loadImages();
+            }
         }
     }
 
@@ -43,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         loadImages(); // Tải lại danh sách ảnh mới
     }
-
 
     private void loadImages() {
         imageUris = getAllImageUris(this);
@@ -75,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             loadImages();
+        } else {
+            // Nếu quyền không được cấp, có thể thông báo cho người dùng
+            Toast.makeText(this, "Quyền truy cập bị từ chối. Không thể tải ảnh.", Toast.LENGTH_SHORT).show();
         }
     }
 }

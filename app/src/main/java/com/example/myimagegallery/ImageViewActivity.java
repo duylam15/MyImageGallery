@@ -4,26 +4,36 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import com.github.chrisbanes.photoview.PhotoView;
-import com.bumptech.glide.Glide;
+import androidx.viewpager2.widget.ViewPager2;
+
+import java.util.List;
 
 public class ImageViewActivity extends AppCompatActivity {
+
+    private ViewPager2 viewPager;
+    private List<Uri> imageUris;
+    private int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
 
-        PhotoView photoView = findViewById(R.id.photoView);
+        viewPager = findViewById(R.id.viewPager);
 
-        // Nhận Uri từ Intent
-        Uri imageUri = getIntent().getParcelableExtra("imageUri");
-        if (imageUri != null) {
-            // Sử dụng Glide để tải ảnh với ảnh thu nhỏ trước
-            Glide.with(this)
-                    .load(imageUri)
-                    .thumbnail(0.1f) // Hiển thị ảnh thumbnail với kích thước 10% trước khi tải đầy đủ
-                    .into(photoView);
-        }
+        // Nhận Uri từ Intent và danh sách ảnh
+        Intent intent = getIntent();
+        imageUris = intent.getParcelableArrayListExtra("imageUris"); // Nhận danh sách Uri
+        currentPosition = intent.getIntExtra("currentPosition", 0); // Vị trí bắt đầu
+
+        // Thiết lập adapter cho ViewPager2
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this, imageUris);
+        viewPager.setAdapter(adapter);
+
+        // Thiết lập vị trí ban đầu của ViewPager
+        viewPager.setCurrentItem(currentPosition, false);
+
+        // Thiết lập hiệu ứng chuyển đổi trang
+        viewPager.setPageTransformer(new ZoomOutPageTransformer());
     }
 }
