@@ -19,7 +19,11 @@ public class ImageViewActivity extends AppCompatActivity {
         // Nhận Uri từ Intent
         Uri imageUri = getIntent().getParcelableExtra("imageUri");
         if (imageUri != null) {
-            Glide.with(this).load(imageUri).into(photoView);
+            // Sử dụng Glide để tải ảnh với ảnh thu nhỏ trước
+            Glide.with(this)
+                    .load(imageUri)
+                    .thumbnail(0.1f) // Hiển thị ảnh thumbnail với kích thước 10% trước khi tải đầy đủ
+                    .into(photoView);
         }
     }
 }

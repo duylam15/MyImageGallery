@@ -38,6 +38,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadImages(); // Tải lại danh sách ảnh mới
+    }
+
+
     private void loadImages() {
         imageUris = getAllImageUris(this);
         imageAdapter = new ImageAdapter(this, imageUris);
