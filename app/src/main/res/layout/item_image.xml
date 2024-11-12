@@ -4,5 +4,5 @@
     android:id="@+id/imageView"
     android:layout_width="100dp"
     android:layout_height="100dp"
-    android:scaleType="centerInside"
+    android:scaleType="centerCrop"
     android:layout_margin="4dp"/>
