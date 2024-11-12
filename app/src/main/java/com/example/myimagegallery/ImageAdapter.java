@@ -1,6 +1,7 @@
 package com.example.myimagegallery;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         Uri imageUri = imageUris.get(position);
         Glide.with(context).load(imageUri).into(holder.imageView);
+
+        // Sự kiện nhấp vào ảnh
+        holder.imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ImageViewActivity.class);
+            intent.putExtra("imageUri", imageUri);
+            context.startActivity(intent);
+        });
     }
+
 
     @Override
     public int getItemCount() {
