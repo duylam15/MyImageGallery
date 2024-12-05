@@ -49,36 +49,40 @@ public class ImageViewActivity extends AppCompatActivity {
 
     // GestureListener để xử lý vuốt ba ngón tay
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            // Kiểm tra số ngón tay
-            if (e1.getPointerCount() == 3) {
-                if (velocityX > 0) {
-                    // Vuốt sang phải -> chuyển ảnh trước đó
-                    int previousPosition = currentPosition - 1;
-                    if (previousPosition >= 0) {
-                        viewPager.setCurrentItem(previousPosition, true);
+            // Chỉ xử lý khi có 3 ngón tay
+            if (e1.getPointerCount() == 3 && e2.getPointerCount() == 3) {
+                float deltaX = e2.getX() - e1.getX();
+                if (Math.abs(deltaX) > Math.abs(e2.getY() - e1.getY())) { // Vuốt ngang
+                    if (deltaX > 0) {
+                        // Vuốt sang phải -> chuyển ảnh trước đó
+                        int previousPosition = viewPager.getCurrentItem() - 1;
+                        if (previousPosition >= 0) {
+                            viewPager.setCurrentItem(previousPosition, true);
+                        }
+                    } else {
+                        // Vuốt sang trái -> chuyển ảnh tiếp theo
+                        int nextPosition = viewPager.getCurrentItem() + 1;
+                        if (nextPosition < imageUris.size()) {
+                            viewPager.setCurrentItem(nextPosition, true);
+                        }
                     }
-                } else {
-                    // Vuốt sang trái -> chuyển ảnh tiếp theo
-                    int nextPosition = currentPosition + 1;
-                    if (nextPosition < imageUris.size()) {
-                        viewPager.setCurrentItem(nextPosition, true);
-                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         }
     }
 
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        // Bắt sự kiện đa chạm để kiểm tra số ngón tay
+        // Chỉ xử lý nếu số ngón tay là 3
         if (ev.getPointerCount() == 3) {
             gestureDetector.onTouchEvent(ev);
         }
         return super.dispatchTouchEvent(ev);
     }
+
 }
